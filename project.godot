@@ -1,6 +1,6 @@
 [application]
 config/name="Neon Arena FPS"
-run/main_scene="res://main.tscn"
+run/main_scene="res://v5_boot.tscn"
 
 [display]
 window/size/viewport_width=1600
