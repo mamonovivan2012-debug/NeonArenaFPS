@@ -20,6 +20,3 @@ Godot 4.5.1 project. This version focuses on six distinct arena layouts and a vi
 ## Build
 Push all files to GitHub, including `.github/workflows/build.yml` and `export_presets.cfg`.
 Open Actions → Build Windows EXE. Download the `NeonArenaFPS-Windows` artifact.
-
-## Honest scope note
-This is a procedural playable map/visual upgrade, not a finished 20 GB commercial game. It does not include purchased/artist-authored hero assets, motion-captured character animation, full sound design or cinematic content. Those require additional real asset production; the package is intentionally not padded with junk data.
