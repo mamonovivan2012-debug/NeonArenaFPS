@@ -1,25 +1,73 @@
 name: Build Windows EXE
+
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches:
+      - main
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout project
+        uses: actions/checkout@v4
+
       - name: Setup Godot
         uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.5.1
           use-dotnet: false
-          include-export-templates: true
+          include-export-templates: false
+
+      - name: Install Godot 4.5.1 export templates
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          GODOT_VERSION="4.5.1"
+          TEMPLATE_DIR="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+
+          mkdir -p "$TEMPLATE_DIR"
+
+          curl -L --fail --retry 3 \
+            "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz" \
+            -o /tmp/godot_export_templates.tpz
+
+          mkdir -p /tmp/godot_export_templates
+
+          unzip -q \
+            /tmp/godot_export_templates.tpz \
+            -d /tmp/godot_export_templates
+
+          cp -a \
+            /tmp/godot_export_templates/templates/. \
+            "$TEMPLATE_DIR/"
+
+          test -f "$TEMPLATE_DIR/windows_debug_x86_64.exe"
+          test -f "$TEMPLATE_DIR/windows_release_x86_64.exe"
+
+      - name: Check Godot version
+        run: godot --version
+
       - name: Import project
-        run: godot --headless --path . --editor --quit
+        run: |
+          godot --headless \
+            --path . \
+            --editor \
+            --quit
+
       - name: Export Windows
         run: |
           mkdir -p build
-          godot --headless --path . --export-release "Windows Desktop" build/NeonArenaFPS.exe
+
+          godot --headless \
+            --path . \
+            --export-release \
+            "Windows Desktop" \
+            build/NeonArenaFPS.exe
+
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
         with:
