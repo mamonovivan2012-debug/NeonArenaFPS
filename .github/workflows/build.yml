@@ -1,0 +1,25 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.5.1
+          use-dotnet: false
+      - name: Import project
+        run: godot --headless --editor --quit
+      - name: Build Windows
+        run: mkdir -p build && godot --headless --path . --export-release "Windows Desktop" build/NeonArenaFPS.exe
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: NeonArenaFPS-Windows
+          path: build/NeonArenaFPS.exe
