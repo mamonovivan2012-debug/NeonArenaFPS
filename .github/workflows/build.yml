@@ -9,17 +9,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: chickensoft-games/setup-godot@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Godot and export templates
+        uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.5.1
           use-dotnet: false
+          include-templates: true
+
       - name: Import project
-        run: godot --headless --editor --quit
-      - name: Build Windows
-        run: mkdir -p build && godot --headless --path . --export-release "Windows Desktop" build/NeonArenaFPS.exe
-      - name: Upload EXE
+        run: godot --headless --editor --path . --quit
+
+      - name: Export Windows build
+        run: |
+          mkdir -p build
+          godot --headless --path . --export-release "Windows Desktop" build/NeonArenaFPS.exe
+
+      - name: Upload Windows EXE
         uses: actions/upload-artifact@v4
         with:
           name: NeonArenaFPS-Windows
           path: build/NeonArenaFPS.exe
+          if-no-files-found: error
